@@ -2,6 +2,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 
 export default function VerifyEmail({ status }: { status?: string }) {
     const { post, processing } = useForm({});
@@ -12,9 +13,11 @@ export default function VerifyEmail({ status }: { status?: string }) {
         post(route('verification.send'));
     };
 
+    const { t } = useLaravelReactI18n();
+
     return (
         <GuestLayout>
-            <Head title="Email Verification" />
+            <Head title={t('Email Verification')} />
 
             <div className="mb-4 text-sm text-gray-600">
                 Thanks for signing up! Before getting started, could you verify
@@ -33,7 +36,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
             <form onSubmit={submit}>
                 <div className="mt-4 flex items-center justify-between">
                     <PrimaryButton disabled={processing}>
-                        Resend Verification Email
+                        {t('Resend Verification Email')}
                     </PrimaryButton>
 
                     <Link
@@ -42,7 +45,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                         as="button"
                         className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
-                        Log Out
+                        {t('Log Out')}
                     </Link>
                 </div>
             </form>

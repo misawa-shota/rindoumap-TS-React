@@ -5,6 +5,7 @@ import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 
 export default function ConfirmPassword() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -18,6 +19,8 @@ export default function ConfirmPassword() {
             onFinish: () => reset('password'),
         });
     };
+
+    const { t } = useLaravelReactI18n();
 
     return (
         <GuestLayout>
@@ -47,7 +50,7 @@ export default function ConfirmPassword() {
 
                 <div className="mt-4 flex items-center justify-end">
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Confirm
+                        {t('Confirm')}
                     </PrimaryButton>
                 </div>
             </form>
