@@ -5,6 +5,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { LaravelReactI18nProvider } from 'laravel-react-i18n';
+import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -20,7 +21,9 @@ createInertiaApp({
 
         root.render(
             <LaravelReactI18nProvider locale='ja' fallbackLocale='en' files={import.meta.glob('../../lang/*.json', { eager: true })}>
-                <App {...props} />
+                <ChakraProvider value={defaultSystem}>
+                    <App {...props} />
+                </ChakraProvider>
             </LaravelReactI18nProvider>
         );
     },
