@@ -6,6 +6,9 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { LaravelReactI18nProvider } from 'laravel-react-i18n';
 import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
+// leafletのスタイルをインポート
+import 'leaflet/dist/leaflet.css';
+import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
