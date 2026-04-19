@@ -1,0 +1,12 @@
+@charset "utf-8";
+
+/* レイヤーコントローラーのデザイン修正 */
+.leaflet-control-layers label > span:first-of-type {
+    display: flex;
+    gap: 6px;
+}
+
+/* 雨レイヤーのデザイン修正 */
+.rain-layer {
+    filter: saturate(10) brightness(10);
+}
