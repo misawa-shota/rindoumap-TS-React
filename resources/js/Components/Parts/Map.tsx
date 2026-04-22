@@ -1,10 +1,13 @@
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, LayersControl } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import FullScreen from './MapCustom/FullScreen';
 import ZoomControl from './MapCustom/ZoomControl';
+import LocateButton from './MapCustom/LocateButton';
+import InitialLocate from './MapCustom/InitialLocate';
 
 const Map = () => {
     delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -84,8 +87,10 @@ const Map = () => {
                     />
                 </LayersControl.Overlay>
             </LayersControl>
+            <LocateButton />
             <ZoomControl />
             <FullScreen />
+            <InitialLocate />
             <Marker position={[35.681236, 139.767125]}>
                 <Popup>東京駅</Popup>
             </Marker>

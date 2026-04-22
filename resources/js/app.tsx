@@ -11,6 +11,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import '../css/leaflet.css';
 
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
