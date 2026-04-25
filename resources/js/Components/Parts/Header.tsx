@@ -1,19 +1,16 @@
 import { Box, HStack, Heading, InputGroup, Input, TabsList, TabsTrigger, Image, Text, Link, Grid, GridItem } from '@chakra-ui/react';
 import { CiSearch, } from "react-icons/ci";
 import { FaMap, FaList } from "react-icons/fa6";
-import { usePage } from '@inertiajs/react';
 import type { User } from '@/types/User';
 
-const Header = ({ user }: { user: User | undefined }) => {
-    const { imageUrl } = usePage().props as { imageUrl?: string };
-    const url = imageUrl || '';
+const Header = ({ user, imageUrl }: { user: User | undefined; imageUrl: string }) => {
 
     return (
         <Box px={5} py={3} w={"100%"} h={20} bg={"gray.100"}>
             <HStack alignItems="center" justifyContent={"space-between"}>
                 <Heading as={"h1"}>
                     <HStack alignItems="center">
-                        <Image src={url} alt="RindouMap Logo" boxSize="40px" mr={2} />
+                        <Image src={imageUrl} alt="RindouMap Logo" boxSize="40px" mr={2} />
                         <Text fontSize="2xl" fontWeight="bold">林道マップ</Text>
                     </HStack>
                 </Heading>

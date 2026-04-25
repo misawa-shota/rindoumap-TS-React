@@ -1,6 +1,5 @@
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, LayersControl } from 'react-leaflet';
-import { useMap } from 'react-leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -8,8 +7,9 @@ import FullScreen from './MapCustom/FullScreen';
 import ZoomControl from './MapCustom/ZoomControl';
 import LocateButton from './MapCustom/LocateButton';
 import InitialLocate from './MapCustom/InitialLocate';
+import type { Rindou } from '@/types/Rindou';
 
-const Map = () => {
+const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
     delete (L.Icon.Default.prototype as any)._getIconUrl;
 
     L.Icon.Default.mergeOptions({
@@ -18,10 +18,20 @@ const Map = () => {
         shadowUrl: markerShadow,
     });
 
+    const customIcon = L.icon({
+        iconUrl: 'storage/images/icon.svg',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: markerShadow,
+        shadowSize: [41, 41],
+        shadowAnchor: [12, 41],
+    })
+
     return (
         <MapContainer
             center={[35.681236, 139.767125]} // 東京駅
-            zoom={13}
+            zoom={10}
             zoomControl={false}
             style={{ height: '100%', width: '100%' }}
         >
@@ -91,9 +101,17 @@ const Map = () => {
             <ZoomControl />
             <FullScreen />
             <InitialLocate />
-            <Marker position={[35.681236, 139.767125]}>
-                <Popup>東京駅</Popup>
-            </Marker>
+            {rindouList.map((rindou: Rindou) => (
+                <Marker
+                    key={rindou.id}
+                    position={[rindou.lat, rindou.lng]}
+                    icon={customIcon}
+                >
+                    <Popup>
+                        {rindou.name}
+                    </Popup>
+                </Marker>
+            ))}
         </MapContainer>
     );
 };
