@@ -7,6 +7,9 @@ import FullScreen from './MapCustom/FullScreen';
 import ZoomControl from './MapCustom/ZoomControl';
 import LocateButton from './MapCustom/LocateButton';
 import InitialLocate from './MapCustom/InitialLocate';
+import MarkerClusterGroup from 'react-leaflet-cluster';
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import type { Rindou } from '@/types/Rindou';
 
 const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
@@ -101,17 +104,19 @@ const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
             <ZoomControl />
             <FullScreen />
             <InitialLocate />
-            {rindouList.map((rindou: Rindou) => (
-                <Marker
-                    key={rindou.id}
-                    position={[rindou.lat, rindou.lng]}
-                    icon={customIcon}
-                >
-                    <Popup>
-                        {rindou.name}
-                    </Popup>
-                </Marker>
-            ))}
+            <MarkerClusterGroup>
+                {rindouList.map((rindou: Rindou) => (
+                    <Marker
+                        key={rindou.id}
+                        position={[rindou.lat, rindou.lng]}
+                        icon={customIcon}
+                    >
+                        <Popup>
+                            {rindou.name}
+                        </Popup>
+                    </Marker>
+                ))}
+            </MarkerClusterGroup>
         </MapContainer>
     );
 };
