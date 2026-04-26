@@ -1,5 +1,5 @@
 import L from 'leaflet';
-import { MapContainer, TileLayer, Marker, Popup, LayersControl } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, LayersControl, Polyline } from 'react-leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -11,8 +11,10 @@ import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import type { Rindou } from '@/types/Rindou';
+import useTogglePolyline from '@/hooks/useTogglePolyline';
 
 const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
+    const { toggle, getLatlngs } = useTogglePolyline(rindouList);
     delete (L.Icon.Default.prototype as any)._getIconUrl;
 
     L.Icon.Default.mergeOptions({
@@ -110,6 +112,9 @@ const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
                         key={rindou.id}
                         position={[rindou.lat, rindou.lng]}
                         icon={customIcon}
+                        eventHandlers={{
+                            click: () => toggle(rindou.id),
+                        }}
                     >
                         <Popup>
                             {rindou.name}
@@ -117,6 +122,15 @@ const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
                     </Marker>
                 ))}
             </MarkerClusterGroup>
+            {Array.isArray(getLatlngs) && getLatlngs.length > 0 && (
+                getLatlngs.map((latlngs, index) => (
+                    <Polyline
+                        key={index}
+                        positions={latlngs}
+                        color="red"
+                    />
+                ))
+            )}
         </MapContainer>
     );
 };

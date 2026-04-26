@@ -1,3 +1,5 @@
+import L from 'leaflet';
+
 type Rindou = {
     id: number;
     name: string;
@@ -7,8 +9,8 @@ type Rindou = {
     created_at: Date;
     updated_at: Date;
     description: string;
-    polyline_latlngs: Text;
-    drive_infomation: Text;
+    polyline_latlngs: L.LatLngExpression[] | null;
+    drive_infomation: string;
     rindou_img: string;
 };
 
