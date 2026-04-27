@@ -7,6 +7,7 @@ import FullScreen from './MapCustom/FullScreen';
 import ZoomControl from './MapCustom/ZoomControl';
 import LocateButton from './MapCustom/LocateButton';
 import InitialLocate from './MapCustom/InitialLocate';
+import ZoomToPolylines from './MapCustom/ZoomToPolylines';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
@@ -131,6 +132,7 @@ const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
                     />
                 ))
             )}
+            <ZoomToPolylines latlngsList={Array.isArray(getLatlngs) ? getLatlngs : []} />
         </MapContainer>
     );
 };
