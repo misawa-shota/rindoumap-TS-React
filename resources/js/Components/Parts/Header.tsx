@@ -2,18 +2,14 @@ import { Box, HStack, Heading, InputGroup, Input, TabsList, TabsTrigger, Image, 
 import { CiSearch, } from "react-icons/ci";
 import { FaMap, FaList } from "react-icons/fa6";
 import type { User } from '@/types/User';
+import AppLogo from './AppLogo';
 
-const Header = ({ user, imageUrl }: { user: User | undefined; imageUrl: string }) => {
+const Header = ({ user }: { user: User | undefined }) => {
 
     return (
         <Box px={5} py={3} w={"100%"} h={20} bg={"gray.100"}>
             <HStack alignItems="center" justifyContent={"space-between"}>
-                <Heading as={"h1"}>
-                    <HStack alignItems="center">
-                        <Image src={imageUrl} alt="RindouMap Logo" boxSize="40px" mr={2} />
-                        <Text fontSize="2xl" fontWeight="bold">林道マップ</Text>
-                    </HStack>
-                </Heading>
+                <AppLogo />
                 <InputGroup startElement={<CiSearch />} w={"3xl"}>
                     <Input placeholder="林道名で検索" rounded={"md"} />
                 </InputGroup>
