@@ -13,22 +13,21 @@ class MapController extends Controller
     public function index()
     {
         $rindouList = Rindou::all();
-        $imageUrl = asset('storage/images/icon.svg');
 
         if(Auth::check()) {
             $clearList = Clear::where('user_id', Auth::user()->id)->get();
             $clearList = json_encode($clearList);
+            $status = "login-success";
 
             return Inertia::render('TopPage', [
                 'rindouList' => $rindouList,
                 'clearList' => $clearList,
-                'imageUrl' => $imageUrl
+                'status' => $status,
             ]);
         }
 
         return Inertia::render('TopPage', [
             'rindouList' => $rindouList,
-            'imageUrl' => $imageUrl
         ]);
     }
 }
