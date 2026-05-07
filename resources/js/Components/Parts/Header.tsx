@@ -1,10 +1,12 @@
 import { Box, HStack, Heading, InputGroup, Input, TabsList, TabsTrigger, Image, Text, Link, Grid, GridItem } from '@chakra-ui/react';
 import { CiSearch, } from "react-icons/ci";
 import { FaMap, FaList } from "react-icons/fa6";
-import type { User } from '@/types/User';
+import { usePage } from '@inertiajs/react';
+import type { PageProps } from '@/types/index';
 import AppLogo from './AppLogo';
 
-const Header = ({ user }: { user: User | undefined }) => {
+const Header = () => {
+    const { auth } = usePage<PageProps>().props;
 
     return (
         <Box px={5} py={3} w={"100%"} h={20} bg={"gray.100"}>
@@ -31,7 +33,11 @@ const Header = ({ user }: { user: User | undefined }) => {
                         一覧で検索
                     </TabsTrigger>
                 </TabsList>
-                {user === undefined ? (
+                {auth?.user ? (
+                    <Link href={route("dashboard")} color={"white"} rounded={"md"} p={2} textAlign={"center"} bg={"red"}>
+                        マイページ
+                    </Link>
+                ) : (
                     <HStack gap={2}>
                         <Link href={route("login")} color={"white"} rounded={"md"} p={2} textAlign={"center"} bg={"red"}>
                             ログイン
@@ -40,10 +46,6 @@ const Header = ({ user }: { user: User | undefined }) => {
                             新規登録
                         </Link>
                     </HStack>
-                ) : (
-                    <Link href={route("dashboard")} color={"white"} rounded={"md"} p={2} textAlign={"center"} bg={"red"}>
-                        マイページ
-                    </Link>
                 )}
             </HStack>
         </Box>
