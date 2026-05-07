@@ -1,37 +1,25 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import type { Rindou } from '@/types/Rindou';
 
-const useTogglePolyline = (rindouList: Rindou[]) => {
+const useTogglePolyline = ({rindouList, selectedRindous}: { rindouList: Rindou[]; selectedRindous: Rindou[] }) => {
     // ポリラインの表示/非表示を切り替えるロジックをここに実装
-    const [selectedId, setSelectedId] = useState<number[]>([]);
-
-    const toggle = (id: number) => {
-        setSelectedId((prevId) => (prevId.includes(id) ? prevId.filter((i) => i !== id) : [...prevId, id]));
-    }
 
     const getLatlngs = useMemo(() => {
-        if (selectedId.length === 0) return null;
-        // console.log('Selected IDs:', selectedId); // デバッグ用ログ
+        if (selectedRindous.length === 0) return [];  // 選択されたRindouがない場合も空配列を返す
 
-        const selectedRindou: Rindou[] = rindouList.filter((rindou) => selectedId.includes(rindou.id));
-        // console.log('Selected Rindou:', selectedRindou); // デバッグ用ログ
-        if (selectedRindou.length === 0) return null;
-
-        const selectedRindouLatlngs: L.LatLngExpression[][] = selectedRindou.map((rindou) => {
-            if (typeof rindou.polyline_latlngs !== 'string') return null;
-            return JSON.parse(rindou.polyline_latlngs);
-        });
+        return selectedRindous
+            .map((rindou) => {
+                if (typeof rindou.polyline_latlngs !== 'string') return null;
+                return JSON.parse(rindou.polyline_latlngs);
+            })
+            .filter((latlngs): latlngs is L.LatLngExpression[] => latlngs !== null);
 
         // console.log('Selected Rindou Latlngs:', selectedRindouLatlngs); // デバッグ用ログ
 
-        if (!Array.isArray(selectedRindouLatlngs) || selectedRindouLatlngs.length === 0) return null;
-        return selectedRindouLatlngs;
-
-    }, [selectedId, rindouList]);
+    }, [selectedRindous]);
 
 
     return {
-        toggle,
         getLatlngs
     };
 };

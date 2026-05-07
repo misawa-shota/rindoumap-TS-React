@@ -13,9 +13,11 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import type { Rindou } from '@/types/Rindou';
 import useTogglePolyline from '@/hooks/useTogglePolyline';
+import useSelectedMarkerIdsToRindous from '@/hooks/useSelectedMarkerIdsToRindous';
 
-const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
-    const { toggle, getLatlngs } = useTogglePolyline(rindouList);
+const Map = ({rindouList, selectedMarkerIds, toggleSelectedMarkerIds, setMarkerRef, togglePopup}: { rindouList: Rindou[]; selectedMarkerIds: number[]; toggleSelectedMarkerIds: (id: number) => void; setMarkerRef: (id: number) => (marker: L.Marker | null) => void; togglePopup: (options: { id: number; isOpen: boolean }) => void; }) => {
+    const selectedRindous = useSelectedMarkerIdsToRindous({rindouList, selectedMarkerIds});
+    const { getLatlngs } = useTogglePolyline({rindouList, selectedRindous});
     delete (L.Icon.Default.prototype as any)._getIconUrl;
 
     L.Icon.Default.mergeOptions({
@@ -111,22 +113,29 @@ const Map = ({ rindouList }: { rindouList: Rindou[] }) => {
                 {rindouList.map((rindou: Rindou) => (
                     <Marker
                         key={rindou.id}
+                        ref={setMarkerRef(rindou.id)}
                         position={[rindou.lat, rindou.lng]}
                         icon={customIcon}
                         eventHandlers={{
-                            click: () => toggle(rindou.id),
+                            click: () => {
+                                toggleSelectedMarkerIds(rindou.id);
+                                togglePopup({ id: rindou.id, isOpen: !selectedMarkerIds.includes(rindou.id) });
+                            }
                         }}
                     >
-                        <Popup>
+                        <Popup
+                            autoClose={false}
+                            closeOnClick={false}
+                        >
                             {rindou.name}
                         </Popup>
                     </Marker>
                 ))}
             </MarkerClusterGroup>
             {Array.isArray(getLatlngs) && getLatlngs.length > 0 && (
-                getLatlngs.map((latlngs, index) => (
+                getLatlngs.map((latlngs) => (
                     <Polyline
-                        key={index}
+                        key={JSON.stringify(latlngs)} // latlngsをキーにして一意性を確保
                         positions={latlngs}
                         color="red"
                     />
