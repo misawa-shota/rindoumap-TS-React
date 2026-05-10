@@ -12,6 +12,7 @@ type Rindou = {
     polyline_latlngs: L.LatLngExpression[] | null;
     drive_infomation: string;
     rindou_img: string;
+    distance: number;
 };
 
 export type { Rindou };

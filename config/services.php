@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'google_search' => [
+        'api_key' => env('GOOGLE_SEARCH_API_KEY'),
+        'engine_id' => env('GOOGLE_SEARCH_ENGINE_ID'),
+    ],
+
 ];
