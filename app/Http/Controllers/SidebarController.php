@@ -3,18 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Rindou;
-use App\Models\Clear;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Inertia\Inertia;
 
-class MapController extends Controller
+class SidebarController extends Controller
 {
-    public function index()
+    public function test()
     {
-        $rindouList = Rindou::all();
-
         $response = Http::get(
             'https://serpapi.com/search.json',
             [
@@ -25,6 +19,14 @@ class MapController extends Controller
                 'api_key' => env('SERP_API_KEY'),
             ]
         );
+        // dd($response->json('images_results'));  // デバッグ用
+        // $data = $response->json();
+        // $imagesResults = $data['images_results'] ?? [];
+        // dd($imagesResults[0]);  // デバッグ用
+
+        // foreach($imagesResults as $image) {
+        //     dd($image);
+        // };
 
         $images = collect($response->json('images_results', []))
             ->filter(fn ($image) => is_array($image))
@@ -41,21 +43,7 @@ class MapController extends Controller
                 ];
             });
 
-        if(Auth::check()) {
-            $clearList = Clear::where('user_id', Auth::user()->id)->get();
-            $clearList = json_encode($clearList);
-            $status = "login-success";
-
-            return Inertia::render('TopPage', [
-                'rindouList' => $rindouList,
-                'clearList' => $clearList,
-                'status' => $status,
-            ]);
-        }
-
-        return Inertia::render('TopPage', [
-            'rindouList' => $rindouList,
-            'images' => $images,
-        ]);
+        // dd($response->json($images));
+        return $images;
     }
 }

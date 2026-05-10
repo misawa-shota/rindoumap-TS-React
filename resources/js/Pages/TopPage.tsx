@@ -1,16 +1,18 @@
-import { Box, Grid, GridItem, TabsContent, TabsRoot, HStack, Heading } from '@chakra-ui/react';
+import { Box, Grid, GridItem, TabsContent, TabsRoot } from '@chakra-ui/react';
 import { Toaster, toaster } from '../../../src/components/ui/toaster';
-import { IoClose } from "react-icons/io5";
 import  Header  from '@/Components/Parts/Header';
 import Map from '@/Components/Parts/Map';
+import Sidebar from '@/Components/Parts/Sidebar';
 import type { Rindou } from '@/types/Rindou';
-import { useEffect } from 'react';
+import type { SearchImages } from '@/types/SearchImages';
+import { useEffect, useState } from 'react';
 import useSidebarHandler from '@/hooks/useSidebarHandler';
 import useSelectedMarkerIds from '@/hooks/useSelectedMarkerIds';
 import useSelectedMarkerIdsToRindous from '@/hooks/useSelectedMarkerIdsToRindous';
 import useTogglePopup from '@/hooks/useTogglePopup';
 
-const TopPage = ({ rindouList, status }: { rindouList: Rindou[]; status: string; }) => {
+const TopPage = ({ rindouList, status, images }: { rindouList: Rindou[]; status: string; images: SearchImages[] }) => {
+    const [ searchImages, setSearchImages ] = useState<SearchImages[]>([]);
     const { selectedMarkerIds, toggleSelectedMarkerIds, clearSelectedMarkerIds } = useSelectedMarkerIds();
     const selectedRindous = useSelectedMarkerIdsToRindous({ rindouList, selectedMarkerIds });
     const { setMarkerRef, togglePopup, closeAllPopups } = useTogglePopup();
@@ -32,6 +34,11 @@ const TopPage = ({ rindouList, status }: { rindouList: Rindou[]; status: string;
         return () => clearTimeout(timerId);
     }, [status]);
 
+    useEffect(() => {
+        setSearchImages(images);
+        console.log(images);
+    }, [selectedLastRindou]);
+
     return (
         <>
             <Toaster />
@@ -41,18 +48,11 @@ const TopPage = ({ rindouList, status }: { rindouList: Rindou[]; status: string;
                     <TabsContent value='index_map' p={0}>
                         <Grid templateColumns={"repeat(10, 1fr)"}>
                             {isOpen && (
-                                <GridItem colSpan={3} p={5}>
-                                    <HStack justifyContent={"space-between"} alignItems={"center"}>
-                                        <Heading h={2} fontSize={"2xl"}>{selectedLastRindou?.name}</Heading>
-                                        <IoClose
-                                            size={"1.5em"}
-                                            cursor={"pointer"}
-                                            onClick={() => {
-                                                handleCloseSidebar();
-                                            }}
-                                        />
-                                    </HStack>
-                                </GridItem>
+                                <Sidebar
+                                    selectedLastRindou={selectedLastRindou}
+                                    handleCloseSidebar={handleCloseSidebar}
+                                    images={searchImages}
+                                />
                             )}
                             <GridItem colSpan={ isOpen ? 7 : 10 }  h={"calc(100vh - 80px)"}>
                                 <Map
