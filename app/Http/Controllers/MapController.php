@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Rindou;
 use App\Models\Clear;
+use App\Models\RindouImage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
@@ -15,39 +16,16 @@ class MapController extends Controller
     {
         $rindouList = Rindou::all();
 
-        $response = Http::get(
-            'https://serpapi.com/search.json',
-            [
-                'engine' => 'google_images',
-                'q' => '剣山スーパー林道',
-                'hl' => 'ja',
-                'gl' => 'jp',
-                'api_key' => env('SERP_API_KEY'),
-            ]
-        );
+        // ログインユーザーがいるか確認、ユーザーのIDとClearテーブルに登録されているユーザーのIDに一致しているデータを取得
+        $isLogin = Auth::check();
 
-        $images = collect($response->json('images_results', []))
-            ->filter(fn ($image) => is_array($image))
-            ->take(10)
-            ->map(function ($image) {
-                // dd($image);
-                return [
-                    'position' => data_get($image, 'position'),
-                    'thumbnail' => data_get($image, 'thumbnail'),
-                    'original' => data_get($image, 'original'),
-                    'link' => data_get($image, 'link'),
-                    'title' => data_get($image, 'title'),
-                    'source' => data_get($image, 'source'),
-                ];
-            });
-
-        if(Auth::check()) {
-            $clearList = Clear::where('user_id', Auth::user()->id)->get();
-            $clearList = json_encode($clearList);
+        if($isLogin) {
             $status = "login-success";
+            $clearList = Clear::where('user_id', Auth::user()->id)->get();
 
             return Inertia::render('TopPage', [
                 'rindouList' => $rindouList,
+                'isLogin' => $isLogin,
                 'clearList' => $clearList,
                 'status' => $status,
             ]);
@@ -55,7 +33,6 @@ class MapController extends Controller
 
         return Inertia::render('TopPage', [
             'rindouList' => $rindouList,
-            'images' => $images,
         ]);
     }
 }

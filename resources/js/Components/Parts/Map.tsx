@@ -12,10 +12,27 @@ import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import type { Rindou } from '@/types/Rindou';
+import type { Clear } from '@/types/Clear';
 import useTogglePolyline from '@/hooks/useTogglePolyline';
 import useSelectedMarkerIdsToRindous from '@/hooks/useSelectedMarkerIdsToRindous';
 
-const Map = ({rindouList, selectedMarkerIds, toggleSelectedMarkerIds, setMarkerRef, togglePopup}: { rindouList: Rindou[]; selectedMarkerIds: number[]; toggleSelectedMarkerIds: (id: number) => void; setMarkerRef: (id: number) => (marker: L.Marker | null) => void; togglePopup: (options: { id: number; isOpen: boolean }) => void; }) => {
+const Map = ({
+        rindouList,
+        selectedMarkerIds,
+        toggleSelectedMarkerIds,
+        setMarkerRef,
+        togglePopup,
+        isLogin,
+        clearList,
+    } : {
+        rindouList: Rindou[];
+        selectedMarkerIds: number[];
+        toggleSelectedMarkerIds: (id: number) => void;
+        setMarkerRef: (id: number) => (marker: L.Marker | null) => void;
+        togglePopup: (options: { id: number; isOpen: boolean }) => void;
+        isLogin: boolean;
+        clearList: Clear[] | null;
+    }) => {
     const selectedRindous = useSelectedMarkerIdsToRindous({rindouList, selectedMarkerIds});
     const { getLatlngs } = useTogglePolyline({rindouList, selectedRindous});
     delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -34,7 +51,17 @@ const Map = ({rindouList, selectedMarkerIds, toggleSelectedMarkerIds, setMarkerR
         shadowUrl: markerShadow,
         shadowSize: [41, 41],
         shadowAnchor: [12, 41],
-    })
+    });
+
+    const clearIcon = L.icon({
+        iconUrl: 'storage/images/clear_stamp.png',
+        iconSize: [35, 46],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: markerShadow,
+        shadowSize: [41, 41],
+        shadowAnchor: [12, 41],
+    });
 
     return (
         <MapContainer
@@ -115,7 +142,7 @@ const Map = ({rindouList, selectedMarkerIds, toggleSelectedMarkerIds, setMarkerR
                         key={rindou.id}
                         ref={setMarkerRef(rindou.id)}
                         position={[rindou.lat, rindou.lng]}
-                        icon={customIcon}
+                        icon={isLogin && Array.isArray(clearList) && clearList.some(clear => Number(clear.rindou_id) === Number(rindou.id)) ? clearIcon : customIcon}
                         eventHandlers={{
                             click: () => {
                                 toggleSelectedMarkerIds(rindou.id);

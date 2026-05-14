@@ -5,18 +5,32 @@ import Map from '@/Components/Parts/Map';
 import Sidebar from '@/Components/Parts/Sidebar';
 import type { Rindou } from '@/types/Rindou';
 import type { SearchImages } from '@/types/SearchImages';
-import { useEffect, useState } from 'react';
+import type { Clear } from '@/types/Clear';
+import { useEffect } from 'react';
 import useSidebarHandler from '@/hooks/useSidebarHandler';
 import useSelectedMarkerIds from '@/hooks/useSelectedMarkerIds';
 import useSelectedMarkerIdsToRindous from '@/hooks/useSelectedMarkerIdsToRindous';
 import useTogglePopup from '@/hooks/useTogglePopup';
+import useSearchRindou from '@/hooks/useSearchRindou';
 
-const TopPage = ({ rindouList, status, images }: { rindouList: Rindou[]; status: string; images: SearchImages[] }) => {
-    const [ searchImages, setSearchImages ] = useState<SearchImages[]>([]);
+const TopPage = ({
+        rindouList,
+        status,
+        images,
+        isLogin,
+        clearList
+    } : {
+        rindouList: Rindou[];
+        status: string;
+        images: SearchImages[];
+        isLogin: boolean;
+        clearList: Clear[] | null;
+    }) => {
     const { selectedMarkerIds, toggleSelectedMarkerIds, clearSelectedMarkerIds } = useSelectedMarkerIds();
     const selectedRindous = useSelectedMarkerIdsToRindous({ rindouList, selectedMarkerIds });
     const { setMarkerRef, togglePopup, closeAllPopups } = useTogglePopup();
-    const { isOpen, selectedLastRindou, handleCloseSidebar }: { isOpen: boolean; selectedLastRindou: Rindou | undefined; handleCloseSidebar: () => void } = useSidebarHandler({selectedRindous, clearSelectedMarkerIds, closeAllPopups});
+    const { isOpen, selectedLastRindou, handleCloseSidebar } : { isOpen: boolean; selectedLastRindou: Rindou | undefined; handleCloseSidebar: () => void } = useSidebarHandler({selectedRindous, clearSelectedMarkerIds, closeAllPopups});
+    const { handleSearchRindou, searchImages } : { handleSearchRindou: () => void; searchImages: SearchImages[] } = useSearchRindou({selectedLastRindou});
 
     useEffect(() => {
         const timerId = setTimeout(() => {
@@ -35,9 +49,12 @@ const TopPage = ({ rindouList, status, images }: { rindouList: Rindou[]; status:
     }, [status]);
 
     useEffect(() => {
-        setSearchImages(images);
-        console.log(images);
+        if(!selectedLastRindou) return;
+
+        handleSearchRindou();
     }, [selectedLastRindou]);
+
+    console.log(searchImages);
 
     return (
         <>
@@ -61,6 +78,8 @@ const TopPage = ({ rindouList, status, images }: { rindouList: Rindou[]; status:
                                     toggleSelectedMarkerIds={toggleSelectedMarkerIds}
                                     setMarkerRef={setMarkerRef}
                                     togglePopup={togglePopup}
+                                    isLogin={isLogin}
+                                    clearList={clearList}
                                 />
                             </GridItem>
                         </Grid>

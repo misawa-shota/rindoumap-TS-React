@@ -3,7 +3,15 @@ import { IoClose } from "react-icons/io5";
 import type { Rindou } from '@/types/Rindou';
 import type { SearchImages } from '@/types/SearchImages';
 
-const Sidebar = ({ selectedLastRindou, handleCloseSidebar, images }: { selectedLastRindou: Rindou | undefined; handleCloseSidebar: () => void; images: SearchImages[] }) => {
+const Sidebar = ({
+        selectedLastRindou,
+        handleCloseSidebar,
+        images,
+    } : {
+        selectedLastRindou: Rindou | undefined;
+        handleCloseSidebar: () => void;
+        images: SearchImages[];
+    }) => {
     const distance = selectedLastRindou?.distance ?? 0;
 
     return (
@@ -34,7 +42,7 @@ const Sidebar = ({ selectedLastRindou, handleCloseSidebar, images }: { selectedL
                         <ScrollAreaViewport>
                             <ScrollAreaContent>
                                 <VStack gap={4}>
-                                    {images.map((image) => (
+                                    {Array.isArray(images) && images.map((image) => (
                                         <LinkBox key={image.original ?? image.position} as={"article"} maxW={"md"} p={5} borderWidth={"1px"} rounded={"md"} overflow={"hidden"}>
                                             <Image src={image.original} alt={image.title} />
                                             <Heading>
