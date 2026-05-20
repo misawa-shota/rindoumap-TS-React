@@ -6,23 +6,24 @@ import Sidebar from '@/Components/Parts/Sidebar';
 import type { Rindou } from '@/types/Rindou';
 import type { SearchImages } from '@/types/SearchImages';
 import type { Clear } from '@/types/Clear';
+import type { Posts } from '@/types/Posts';
+import type { iconImage } from '@/types/iconImage';
+import type { postImage } from '@/types/postImage';
 import { useEffect } from 'react';
 import useSidebarHandler from '@/hooks/useSidebarHandler';
 import useSelectedMarkerIds from '@/hooks/useSelectedMarkerIds';
 import useSelectedMarkerIdsToRindous from '@/hooks/useSelectedMarkerIdsToRindous';
 import useTogglePopup from '@/hooks/useTogglePopup';
-import useSearchRindou from '@/hooks/useSearchRindou';
+import useSidebar from '@/hooks/useSidebar';
 
 const TopPage = ({
         rindouList,
         status,
-        images,
         isLogin,
         clearList
     } : {
         rindouList: Rindou[];
         status: string;
-        images: SearchImages[];
         isLogin: boolean;
         clearList: Clear[] | null;
     }) => {
@@ -30,7 +31,21 @@ const TopPage = ({
     const selectedRindous = useSelectedMarkerIdsToRindous({ rindouList, selectedMarkerIds });
     const { setMarkerRef, togglePopup, closeAllPopups } = useTogglePopup();
     const { isOpen, selectedLastRindou, handleCloseSidebar } : { isOpen: boolean; selectedLastRindou: Rindou | undefined; handleCloseSidebar: () => void } = useSidebarHandler({selectedRindous, clearSelectedMarkerIds, closeAllPopups});
-    const { handleSearchRindou, searchImages } : { handleSearchRindou: () => void; searchImages: SearchImages[] } = useSearchRindou({selectedLastRindou});
+    const {
+        getSearchRindou,
+        getPostsRindou,
+        searchImages,
+        posts,
+        iconImages,
+        postImages,
+    } : {
+        getSearchRindou: () => void;
+        getPostsRindou: () => void;
+        searchImages: SearchImages[];
+        posts: Posts[];
+        iconImages: iconImage[];
+        postImages: postImage[];
+    } = useSidebar({selectedLastRindou});
 
     useEffect(() => {
         const timerId = setTimeout(() => {
@@ -51,7 +66,8 @@ const TopPage = ({
     useEffect(() => {
         if(!selectedLastRindou) return;
 
-        handleSearchRindou();
+        getSearchRindou();
+        getPostsRindou();
     }, [selectedLastRindou]);
 
     console.log(searchImages);
@@ -69,6 +85,9 @@ const TopPage = ({
                                     selectedLastRindou={selectedLastRindou}
                                     handleCloseSidebar={handleCloseSidebar}
                                     images={searchImages}
+                                    posts={posts}
+                                    iconImages={iconImages}
+                                    postImages={postImages}
                                 />
                             )}
                             <GridItem colSpan={ isOpen ? 7 : 10 }  h={"calc(100vh - 80px)"}>

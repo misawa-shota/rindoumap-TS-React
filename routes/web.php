@@ -29,5 +29,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::post('/sidebar/search', [SidebarController::class, 'search'])->name('sidebar.search');
+Route::post('/sidebar/posts', [SidebarController::class, 'posts'])->name('sidebar.posts');
 
 require __DIR__.'/auth.php';
