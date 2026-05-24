@@ -30,5 +30,5 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/sidebar/search', [SidebarController::class, 'search'])->name('sidebar.search');
 Route::post('/sidebar/posts', [SidebarController::class, 'posts'])->name('sidebar.posts');
-
+Route::post('/sidebar/weather', [SidebarController::class, 'weather'])->name('sidebar.weather');
 require __DIR__.'/auth.php';

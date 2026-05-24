@@ -34,6 +34,7 @@ const TopPage = ({
     const {
         getSearchRindou,
         getPostsRindou,
+        getWeatherData,
         searchImages,
         posts,
         iconImages,
@@ -41,6 +42,7 @@ const TopPage = ({
     } : {
         getSearchRindou: () => void;
         getPostsRindou: () => void;
+        getWeatherData: () => void;
         searchImages: SearchImages[];
         posts: Posts[];
         iconImages: iconImage[];
@@ -68,9 +70,8 @@ const TopPage = ({
 
         getSearchRindou();
         getPostsRindou();
+        getWeatherData();
     }, [selectedLastRindou]);
-
-    console.log(searchImages);
 
     return (
         <>

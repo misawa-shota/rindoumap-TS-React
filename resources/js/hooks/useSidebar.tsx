@@ -47,9 +47,32 @@ const useSidebar = ({ selectedLastRindou }: { selectedLastRindou: Rindou | undef
         }
     }, [selectedLastRindou]);
 
+    const getWeatherData = useCallback(async () => {
+        if (!selectedLastRindou) return;
+
+        try {
+            const response = await axios.post("/sidebar/weather", {
+                weatherRindou: selectedLastRindou,
+            });
+
+            // console.log('Weather Response:', response); // デバッグ用ログ
+
+            // 天気データの処理をここに実装
+            const weatherData = response.data;
+            console.log('Weather Data:', weatherData); // デバッグ用ログ
+            console.log('Weather Data hourly:', weatherData.hourly); // デバッグ用ログ
+            console.log('Weather Data daily:', weatherData.daily); // デバッグ用ログ
+        } catch (error: any) {
+            console.error(error);
+            console.error(error.response.data);
+            console.error(error.response.status);
+        }
+    }, [selectedLastRindou]);
+
     return {
         getSearchRindou,
         getPostsRindou,
+        getWeatherData,
         searchImages,
         posts,
         iconImages,
