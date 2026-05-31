@@ -9,12 +9,17 @@ import type { Clear } from '@/types/Clear';
 import type { Posts } from '@/types/Posts';
 import type { iconImage } from '@/types/iconImage';
 import type { postImage } from '@/types/postImage';
+import type { WeatherData } from '@/types/WeatherData';
 import { useEffect } from 'react';
 import useSidebarHandler from '@/hooks/useSidebarHandler';
 import useSelectedMarkerIds from '@/hooks/useSelectedMarkerIds';
 import useSelectedMarkerIdsToRindous from '@/hooks/useSelectedMarkerIdsToRindous';
 import useTogglePopup from '@/hooks/useTogglePopup';
 import useSidebar from '@/hooks/useSidebar';
+import useGetWeatherIcon from '@/hooks/useGetWeatherIcon';
+import useGetWindDirection from '@/hooks/useGetWindDirection';
+import useFormatDate from '@/hooks/useFormatDate';
+import useFormatHour from '@/hooks/useFormatHour';
 
 const TopPage = ({
         rindouList,
@@ -34,19 +39,27 @@ const TopPage = ({
     const {
         getSearchRindou,
         getPostsRindou,
+        getWeatherData,
         searchImages,
         posts,
         iconImages,
         postImages,
+        weatherData,
     } : {
         getSearchRindou: () => void;
         getPostsRindou: () => void;
+        getWeatherData: () => void;
         searchImages: SearchImages[];
         posts: Posts[];
         iconImages: iconImage[];
         postImages: postImage[];
+        weatherData: WeatherData | null;
     } = useSidebar({selectedLastRindou});
 
+    const { getWeatherIcon } = useGetWeatherIcon();
+    const { getWindDirection } = useGetWindDirection();
+    const { formatDate } = useFormatDate();
+    const { formatHour } = useFormatHour();
     useEffect(() => {
         const timerId = setTimeout(() => {
             if (status === "login-success") {
@@ -68,9 +81,8 @@ const TopPage = ({
 
         getSearchRindou();
         getPostsRindou();
+        getWeatherData();
     }, [selectedLastRindou]);
-
-    console.log(searchImages);
 
     return (
         <>
@@ -88,6 +100,11 @@ const TopPage = ({
                                     posts={posts}
                                     iconImages={iconImages}
                                     postImages={postImages}
+                                    weatherData={weatherData}
+                                    getWeatherIcon={getWeatherIcon}
+                                    getWindDirection={getWindDirection}
+                                    formatDate={formatDate}
+                                    formatHour={formatHour}
                                 />
                             )}
                             <GridItem colSpan={ isOpen ? 7 : 10 }  h={"calc(100vh - 80px)"}>
