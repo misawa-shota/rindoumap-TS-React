@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\RindouImage;
 use App\Models\Post;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class SidebarController extends Controller
 {
@@ -108,13 +109,17 @@ class SidebarController extends Controller
                 'latitude' => $weatherRindou['lat'],
                 'longitude' => $weatherRindou['lng'],
                 'hourly' => 'temperature_2m,precipitation_probability,weathercode,precipitation,wind_speed_10m,wind_direction_10m',
-                'daily' => 'temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode',
+                'daily' => 'temperature_2m_max,temperature_2m_min,precipitation_probability_max,weathercode,windspeed_10m_max',
+                'current' => 'temperature_2m,weathercode,precipitation,wind_speed_10m,wind_direction_10m',
                 'timezone' => 'Asia/Tokyo',
+                'windspeed_unit' => 'ms',
+                'forecast_days' => 8,
             ]
         );
 
         $weather = $response->json();
 
+        $today = Carbon::today()->format('Y-m-d');
         $hourly = collect($weather['hourly']['time'] ?? [])->map(function ($time, $index) use ($weather) {
             return [
                 'time' => $time,
@@ -125,21 +130,37 @@ class SidebarController extends Controller
                 'wind_speed_10m' => $weather['hourly']['wind_speed_10m'][$index] ?? null,
                 'wind_direction_10m' => $weather['hourly']['wind_direction_10m'][$index] ?? null,
             ];
-        });
+        })
+        ->filter(fn ($hour) => str_starts_with($hour['time'], $today))
+        ->values();
 
         $daily = collect($weather['daily']['time'] ?? [])->map(function ($time, $index) use ($weather) {
             return [
                 'time' => $time,
                 'temperature_2m_max' => $weather['daily']['temperature_2m_max'][$index] ?? null,
                 'temperature_2m_min' => $weather['daily']['temperature_2m_min'][$index] ?? null,
-                'precipitation_sum' => $weather['daily']['precipitation_sum'][$index] ?? null,
+                'precipitation_probability_max' => $weather['daily']['precipitation_probability_max'][$index] ?? null,
                 'weathercode' => $weather['daily']['weathercode'][$index] ?? null,
+                'windspeed_10m_max' => $weather['daily']['windspeed_10m_max'][$index] ?? null,
             ];
         });
+
+        $currentTime = substr($weather['current']['time'], 0, 13) . ':00';
+        $hourlyIndex = array_search($currentTime, $weather['hourly']['time']);
+
+        $current = [
+                'temperature_2m' => $weather['current']['temperature_2m'] ?? null,
+                'weathercode' => $weather['current']['weathercode'] ?? null,
+                'precipitation' => $weather['current']['precipitation'] ?? null,
+                'wind_speed_10m' => $weather['current']['wind_speed_10m'] ?? null,
+                'wind_direction_10m' => $weather['current']['wind_direction_10m'] ?? null,
+                'precipitation_probability' => $hourlyIndex !== false ? $weather['hourly']['precipitation_probability'][$hourlyIndex] : null,
+            ];
 
         return [
             'hourly' => $hourly,
             'daily' => $daily,
+            'current' => $current,
         ];
     }
 }

@@ -5,12 +5,14 @@ import type { SearchImages } from "@/types/SearchImages";
 import type { Posts } from "@/types/Posts";
 import type { iconImage } from "@/types/iconImage";
 import type { postImage } from "@/types/postImage";
+import type { WeatherData } from "@/types/WeatherData";
 
 const useSidebar = ({ selectedLastRindou }: { selectedLastRindou: Rindou | undefined }) => {
     const [ searchImages, setSearchImages ] = useState<SearchImages[]>([]);
     const [ posts, setPosts ] = useState<Posts[]>([]);
     const [ iconImages, setIconImages ] = useState<iconImage[]>([]);
     const [ postImages, setPostImages ] = useState<postImage[]>([]);
+    const [ weatherData, setWeatherData ] = useState<WeatherData | null>(null);
 
     const getSearchRindou = useCallback(async () => {
         if (!selectedLastRindou) return;
@@ -55,13 +57,7 @@ const useSidebar = ({ selectedLastRindou }: { selectedLastRindou: Rindou | undef
                 weatherRindou: selectedLastRindou,
             });
 
-            // console.log('Weather Response:', response); // デバッグ用ログ
-
-            // 天気データの処理をここに実装
-            const weatherData = response.data;
-            console.log('Weather Data:', weatherData); // デバッグ用ログ
-            console.log('Weather Data hourly:', weatherData.hourly); // デバッグ用ログ
-            console.log('Weather Data daily:', weatherData.daily); // デバッグ用ログ
+            setWeatherData(response.data);
         } catch (error: any) {
             console.error(error);
             console.error(error.response.data);
@@ -77,6 +73,7 @@ const useSidebar = ({ selectedLastRindou }: { selectedLastRindou: Rindou | undef
         posts,
         iconImages,
         postImages,
+        weatherData,
     };
 };
 
