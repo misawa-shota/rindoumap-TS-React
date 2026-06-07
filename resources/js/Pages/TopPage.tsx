@@ -20,6 +20,7 @@ import useGetWeatherIcon from '@/hooks/useGetWeatherIcon';
 import useGetWindDirection from '@/hooks/useGetWindDirection';
 import useFormatDate from '@/hooks/useFormatDate';
 import useFormatHour from '@/hooks/useFormatHour';
+import useSearchRindou from '@/hooks/useSearchRindou';
 
 const TopPage = ({
         rindouList,
@@ -35,7 +36,15 @@ const TopPage = ({
     const { selectedMarkerIds, toggleSelectedMarkerIds, clearSelectedMarkerIds } = useSelectedMarkerIds();
     const selectedRindous = useSelectedMarkerIdsToRindous({ rindouList, selectedMarkerIds });
     const { setMarkerRef, togglePopup, closeAllPopups } = useTogglePopup();
-    const { isOpen, selectedLastRindou, handleCloseSidebar } : { isOpen: boolean; selectedLastRindou: Rindou | undefined; handleCloseSidebar: () => void } = useSidebarHandler({selectedRindous, clearSelectedMarkerIds, closeAllPopups});
+    const {
+        isOpen,
+        selectedLastRindou,
+        handleCloseSidebar
+    } : {
+        isOpen: boolean;
+        selectedLastRindou: Rindou | undefined;
+        handleCloseSidebar: () => void
+    } = useSidebarHandler({selectedRindous, clearSelectedMarkerIds, closeAllPopups});
     const {
         getSearchRindou,
         getPostsRindou,
@@ -60,6 +69,8 @@ const TopPage = ({
     const { getWindDirection } = useGetWindDirection();
     const { formatDate } = useFormatDate();
     const { formatHour } = useFormatHour();
+    const { searchRindouId, getSearchData } = useSearchRindou();
+
     useEffect(() => {
         const timerId = setTimeout(() => {
             if (status === "login-success") {
@@ -89,7 +100,11 @@ const TopPage = ({
             <Toaster />
             <Box>
                 <TabsRoot defaultValue={"index_map"} variant={"enclosed"}>
-                    <Header />
+                    <Header
+                        toggleSelectedMarkerIds={toggleSelectedMarkerIds}
+                        searchRindouId={searchRindouId}
+                        getSearchData={getSearchData}
+                    />
                     <TabsContent value='index_map' p={0}>
                         <Grid templateColumns={"repeat(10, 1fr)"}>
                             {isOpen && (
