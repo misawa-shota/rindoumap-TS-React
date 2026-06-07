@@ -68,7 +68,7 @@ const Sidebar = ({
                                     <ScrollAreaViewport>
                                         <ScrollAreaContent>
                                             <VStack gap={4}>
-                                                {Array.isArray(images) && images.map((image) => (
+                                                {Array.isArray(images) && images.length > 0 ? (images.map((image) => (
                                                     <LinkBox key={image.original ?? image.position} as={"article"} maxW={"md"} p={5} borderWidth={"1px"} rounded={"md"} overflow={"hidden"}>
                                                         <Image src={image.original} alt={image.title} />
                                                         <Heading>
@@ -78,7 +78,9 @@ const Sidebar = ({
                                                             </LinkOverlay>
                                                         </Heading>
                                                     </LinkBox>
-                                                ))}
+                                                ))) : (
+                                                    <Text fontSize={"lg"} fontWeight={"bold"}>検索結果の取得に失敗しました。</Text>
+                                                )}
                                             </VStack>
                                         </ScrollAreaContent>
                                     </ScrollAreaViewport>
@@ -93,7 +95,7 @@ const Sidebar = ({
                                     <ScrollAreaViewport>
                                         <ScrollAreaContent>
                                             <VStack gap={4}>
-                                                {Array.isArray(posts) && posts.map((post) => (
+                                                {Array.isArray(posts) && posts.length > 0 ? (posts.map((post) => (
                                                     <DialogRoot  key={post.id} size={"cover"} placement={"center"} motionPreset={"slide-in-bottom"}>
                                                         <DialogTrigger asChild>
                                                             <CardRoot p={1} cursor={"pointer"} maxW={"md"} minW={"md"} borderWidth={"1px"} rounded={"md"} >
@@ -169,7 +171,9 @@ const Sidebar = ({
                                                             </DialogPositioner>
                                                         </Portal>
                                                     </DialogRoot>
-                                                ))}
+                                                ))) : (
+                                                    <Text fontSize={"lg"} fontWeight={"bold"}>この林道に関する投稿は、まだありません。</Text>
+                                                )}
                                             </VStack>
                                         </ScrollAreaContent>
                                     </ScrollAreaViewport>

@@ -11,7 +11,7 @@ const ZoomToPolylines = ({ latlngsList }: { latlngsList: L.LatLngExpression[][] 
         const allPoints = latlngsList.flat();
         const bounds = L.latLngBounds(allPoints);
 
-        map.fitBounds(bounds, { padding: [50, 50] });
+        map.fitBounds(bounds, { padding: [30, 30] });
     }, [latlngsList]);
 
     return null;

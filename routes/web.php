@@ -3,6 +3,7 @@
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\SidebarController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HeaderController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -28,7 +29,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// サイドバーのルート
 Route::post('/sidebar/search', [SidebarController::class, 'search'])->name('sidebar.search');
 Route::post('/sidebar/posts', [SidebarController::class, 'posts'])->name('sidebar.posts');
 Route::post('/sidebar/weather', [SidebarController::class, 'weather'])->name('sidebar.weather');
+
+// ヘッダーのルート
+Route::post('/header/search', [HeaderController::class, 'search'])->name('header.search');
 require __DIR__.'/auth.php';

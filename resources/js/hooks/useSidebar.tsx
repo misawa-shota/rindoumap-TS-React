@@ -51,6 +51,7 @@ const useSidebar = ({ selectedLastRindou }: { selectedLastRindou: Rindou | undef
 
     const getWeatherData = useCallback(async () => {
         if (!selectedLastRindou) return;
+        console.log(selectedLastRindou);
 
         try {
             const response = await axios.post("/sidebar/weather", {
