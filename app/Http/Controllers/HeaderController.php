@@ -17,9 +17,12 @@ class HeaderController extends Controller
         $result = Rindou::where('name', 'like', '%' . $searchQuery . '%')->first();
 
         if ($result) {
-            return response()->json($result);
+            return response()->json([
+                'result' => $result,
+                'status' => 'search-success',
+            ]);
         } else {
-            return response()->json(['status' => '一致する林道が見つかりませんでした']);
+            return response()->json(['status' => 'search-error']);
         }
     }
 }

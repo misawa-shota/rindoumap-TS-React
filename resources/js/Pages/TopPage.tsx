@@ -69,7 +69,7 @@ const TopPage = ({
     const { getWindDirection } = useGetWindDirection();
     const { formatDate } = useFormatDate();
     const { formatHour } = useFormatHour();
-    const { searchRindouId, getSearchData } = useSearchRindou();
+    const { searchRindouId, getSearchData, searchStatus } = useSearchRindou();
 
     useEffect(() => {
         const timerId = setTimeout(() => {
@@ -81,11 +81,19 @@ const TopPage = ({
                     closable: true,
                     duration: 5000,
                 });
+            } else if (searchStatus === "search-error") {
+                toaster.create({
+                    title: "検索エラー",
+                    description: "一致する林道が見つかりませんでした。",
+                    type: "error",
+                    closable: true,
+                    duration: 5000,
+                });
             }
         }, 0);
 
         return () => clearTimeout(timerId);
-    }, [status]);
+    }, [status, searchStatus]);
 
     useEffect(() => {
         if(!selectedLastRindou) return;

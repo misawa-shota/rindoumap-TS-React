@@ -49,7 +49,10 @@ const Header = ({
                         borderBottomWidth={"thin"}
                         borderColor={"gray.500"}
                         p={2}
-                        onClick={() => getSearchData(searchQuery)}
+                        onClick={() => {
+                            getSearchData(searchQuery);
+                            setSearchQuery("");
+                        }}
                     >検索</Button>
                 </Group>
                 <TabsList bg={"gray.200"} rounded={"md"} p={2} gap={3}>
