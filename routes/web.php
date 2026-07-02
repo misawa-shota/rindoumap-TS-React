@@ -36,4 +36,6 @@ Route::post('/sidebar/weather', [SidebarController::class, 'weather'])->name('si
 
 // ヘッダーのルート
 Route::post('/header/search', [HeaderController::class, 'search'])->name('header.search');
+Route::post('/header/getPrefecture', [HeaderController::class, 'getPrefecture'])->name('header.getPrefecture');
+Route::post('/header/storePost', [HeaderController::class, 'storePost'])->name('header.storePost');
 require __DIR__.'/auth.php';
