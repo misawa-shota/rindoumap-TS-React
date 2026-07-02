@@ -10,7 +10,7 @@ import type { Posts } from '@/types/Posts';
 import type { iconImage } from '@/types/iconImage';
 import type { postImage } from '@/types/postImage';
 import type { WeatherData } from '@/types/WeatherData';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useSidebarHandler from '@/hooks/useSidebarHandler';
 import useSelectedMarkerIds from '@/hooks/useSelectedMarkerIds';
 import useSelectedMarkerIdsToRindous from '@/hooks/useSelectedMarkerIdsToRindous';
@@ -20,16 +20,17 @@ import useGetWeatherIcon from '@/hooks/useGetWeatherIcon';
 import useGetWindDirection from '@/hooks/useGetWindDirection';
 import useFormatDate from '@/hooks/useFormatDate';
 import useFormatHour from '@/hooks/useFormatHour';
-import useSearchRindou from '@/hooks/useSearchRindou';
+import useHeaderHandler from '@/hooks/useHeaderHandler';
+import useShowToast from '@/hooks/useShowToast';
 
 const TopPage = ({
         rindouList,
-        status,
+        loginMessage,
         isLogin,
         clearList
     } : {
         rindouList: Rindou[];
-        status: string;
+        loginMessage: string;
         isLogin: boolean;
         clearList: Clear[] | null;
     }) => {
@@ -69,31 +70,43 @@ const TopPage = ({
     const { getWindDirection } = useGetWindDirection();
     const { formatDate } = useFormatDate();
     const { formatHour } = useFormatHour();
-    const { searchRindouId, getSearchData, searchStatus } = useSearchRindou();
+    const {
+        searchRindouId,
+        getSearchData,
+        searchMessage,
+        getSelectedPrefecture,
+        formSelectedRindous,
+        storePost,
+        postMessage,
+    } = useHeaderHandler();
+    const { showToast } = useShowToast();
 
     useEffect(() => {
-        const timerId = setTimeout(() => {
-            if (status === "login-success") {
-                toaster.create({
-                    title: "ログイン成功",
-                    description: "ログインに成功しました。",
-                    type: "success",
-                    closable: true,
-                    duration: 5000,
-                });
-            } else if (searchStatus === "search-error") {
-                toaster.create({
-                    title: "検索エラー",
-                    description: "一致する林道が見つかりませんでした。",
-                    type: "error",
-                    closable: true,
-                    duration: 5000,
-                });
-            }
-        }, 0);
+        if (!loginMessage) return;
 
-        return () => clearTimeout(timerId);
-    }, [status, searchStatus]);
+        const timer = setTimeout(() => {
+            showToast(loginMessage);
+        }, 0);
+        return () => clearTimeout(timer);
+    },[ loginMessage, showToast ]);
+
+    useEffect(() => {
+        if (!searchMessage) return;
+
+        const timer = setTimeout(() => {
+            showToast(searchMessage);
+        }, 0)
+        return () => clearTimeout(timer);
+    },[ searchMessage, showToast ]);
+
+    useEffect(() => {
+        if (!postMessage) return;
+
+        const timer = setTimeout(() => {
+            showToast(postMessage);
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [ postMessage, showToast ]);
 
     useEffect(() => {
         if(!selectedLastRindou) return;
@@ -112,6 +125,10 @@ const TopPage = ({
                         toggleSelectedMarkerIds={toggleSelectedMarkerIds}
                         searchRindouId={searchRindouId}
                         getSearchData={getSearchData}
+                        getSelectedPrefecture={getSelectedPrefecture}
+                        formSelectedRindous={formSelectedRindous}
+                        storePost={storePost}
+                        postMessage={postMessage}
                     />
                     <TabsContent value='index_map' p={0}>
                         <Grid templateColumns={"repeat(10, 1fr)"}>

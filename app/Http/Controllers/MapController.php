@@ -20,14 +20,14 @@ class MapController extends Controller
         $isLogin = Auth::check();
 
         if($isLogin) {
-            $status = "login-success";
+            $loginMessage = "login-success";
             $clearList = Clear::where('user_id', Auth::user()->id)->get();
 
             return Inertia::render('TopPage', [
                 'rindouList' => $rindouList,
                 'isLogin' => $isLogin,
                 'clearList' => $clearList,
-                'status' => $status,
+                'loginMessage' => $loginMessage,
             ]);
         }
 

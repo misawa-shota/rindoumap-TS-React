@@ -7,6 +7,11 @@
 }
 
 /* 雨レイヤーのデザイン修正 */
-.rain-layer {
-    filter: saturate(10) brightness(10);
+.rain-layer .leaflet-tile {
+    filter:
+        saturate(100)
+        contrast(4)
+        brightness(100)
+    ;
 }
+
