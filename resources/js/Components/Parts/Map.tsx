@@ -1,4 +1,4 @@
-import L from 'leaflet';
+import L, { map } from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, LayersControl, Polyline } from 'react-leaflet';
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -8,6 +8,7 @@ import ZoomControl from './MapCustom/ZoomControl';
 import LocateButton from './MapCustom/LocateButton';
 import InitialLocate from './MapCustom/InitialLocate';
 import ZoomToPolylines from './MapCustom/ZoomToPolylines';
+import JmaRadarLayer from './MapCustom/JmaRadarLayer';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
@@ -24,6 +25,9 @@ const Map = ({
         togglePopup,
         isLogin,
         clearList,
+        host,
+        time,
+        targetTime
     } : {
         rindouList: Rindou[];
         selectedMarkerIds: number[];
@@ -32,145 +36,151 @@ const Map = ({
         togglePopup: (options: { id: number; isOpen: boolean }) => void;
         isLogin: boolean;
         clearList: Clear[] | null;
+        host: string;
+        time: number | undefined;
+        targetTime: string;
     }) => {
-    const selectedRindous = useSelectedMarkerIdsToRindous({rindouList, selectedMarkerIds});
-    const { getLatlngs } = useTogglePolyline({rindouList, selectedRindous});
-    delete (L.Icon.Default.prototype as any)._getIconUrl;
+        const selectedRindous = useSelectedMarkerIdsToRindous({rindouList, selectedMarkerIds});
+        const { getLatlngs } = useTogglePolyline({rindouList, selectedRindous});
 
-    L.Icon.Default.mergeOptions({
-        iconRetinaUrl: markerIcon2x,
-        iconUrl: markerIcon,
-        shadowUrl: markerShadow,
-    });
+        delete (L.Icon.Default.prototype as any)._getIconUrl;
 
-    const customIcon = L.icon({
-        iconUrl: 'storage/images/icon.svg',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl: markerShadow,
-        shadowSize: [41, 41],
-        shadowAnchor: [12, 41],
-    });
+        L.Icon.Default.mergeOptions({
+            iconRetinaUrl: markerIcon2x,
+            iconUrl: markerIcon,
+            shadowUrl: markerShadow,
+        });
 
-    const clearIcon = L.icon({
-        iconUrl: 'storage/images/clear_stamp.png',
-        iconSize: [35, 46],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowUrl: markerShadow,
-        shadowSize: [41, 41],
-        shadowAnchor: [12, 41],
-    });
+        const customIcon = L.icon({
+            iconUrl: 'storage/images/icon.svg',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowUrl: markerShadow,
+            shadowSize: [41, 41],
+            shadowAnchor: [12, 41],
+        });
 
-    return (
-        <MapContainer
-            center={[35.681236, 139.767125]} // 東京駅
-            zoom={10}
-            zoomControl={false}
-            style={{ height: '100%', width: '100%' }}
-        >
-            <LayersControl position="topright">
-                <LayersControl.BaseLayer checked name="国土地理院 標準">
-                    <TileLayer
-                        attribution="&copy; 国土地理院"
-                        url="https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png"
-                        minZoom={2}
-                        maxZoom={18}
-                    />
-                </LayersControl.BaseLayer>
-                <LayersControl.BaseLayer name="国土地理院 写真">
-                    <TileLayer
-                        attribution="&copy; 国土地理院"
-                        url="https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg"
-                        minZoom={2}
-                        maxZoom={18}
-                    />
-                </LayersControl.BaseLayer>
-                <LayersControl.BaseLayer name="国土地理院 陰影起伏図">
-                    <TileLayer
-                        attribution="&copy; 国土地理院"
-                        url="https://cyberjapandata.gsi.go.jp/xyz/relief/{z}/{x}/{y}.png"
-                        maxZoom={15}
-                    />
-                </LayersControl.BaseLayer>
-                <LayersControl.BaseLayer name="OpenTopoMap">
-                    <TileLayer
-                        attribution="© OpenTopoMap contributors"
-                        url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
-                        minZoom={0}
-                        maxZoom={17}
-                    />
-                </LayersControl.BaseLayer>
-                <LayersControl.BaseLayer name="OpenStreetMap">
-                    <TileLayer
-                        attribution='&copy; OpenStreetMap contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        minZoom={0}
-                        maxZoom={19}
-                    />
-                </LayersControl.BaseLayer>
-                <LayersControl.Overlay name="雲レイヤー">
-                    <TileLayer
-                        url="https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=d334b90a323d9d1c6fa75f5758ec6e69"
-                        opacity={0.9}
-                        zIndex={80}
-                    />
-                </LayersControl.Overlay>
-                <LayersControl.Overlay checked name="雨レイヤー">
-                    <TileLayer
-                        url="https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=d334b90a323d9d1c6fa75f5758ec6e69"
-                        zIndex={100}
-                        className="rain-layer"
-                    />
-                </LayersControl.Overlay>
-                <LayersControl.Overlay name="気温レイヤー">
-                    <TileLayer
-                        url="https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=d334b90a323d9d1c6fa75f5758ec6e69"
-                        opacity={0.7}
-                        zIndex={50}
-                    />
-                </LayersControl.Overlay>
-            </LayersControl>
-            <LocateButton />
-            <ZoomControl />
-            <FullScreen />
-            <InitialLocate />
-            <MarkerClusterGroup>
-                {rindouList.map((rindou: Rindou) => (
-                    <Marker
-                        key={rindou.id}
-                        ref={setMarkerRef(rindou.id)}
-                        position={[rindou.lat, rindou.lng]}
-                        icon={isLogin && Array.isArray(clearList) && clearList.some(clear => Number(clear.rindou_id) === Number(rindou.id)) ? clearIcon : customIcon}
-                        eventHandlers={{
-                            click: () => {
-                                toggleSelectedMarkerIds(rindou.id);
-                                togglePopup({ id: rindou.id, isOpen: !selectedMarkerIds.includes(rindou.id) });
-                            }
-                        }}
-                    >
-                        <Popup
-                            autoClose={false}
-                            closeOnClick={false}
+        const clearIcon = L.icon({
+            iconUrl: 'storage/images/clear_stamp.png',
+            iconSize: [35, 46],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowUrl: markerShadow,
+            shadowSize: [41, 41],
+            shadowAnchor: [12, 41],
+        });
+
+        return (
+            <MapContainer
+                center={[35.681236, 139.767125]} // 東京駅
+                zoom={10}
+                zoomControl={false}
+                style={{ height: '100%', width: '100%' }}
+            >
+                <LayersControl position="topright">
+                    <LayersControl.BaseLayer checked name="国土地理院 標準">
+                        <TileLayer
+                            attribution="&copy; 国土地理院"
+                            url="https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png"
+                            minZoom={2}
+                            maxZoom={18}
+                        />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.BaseLayer name="国土地理院 写真">
+                        <TileLayer
+                            attribution="&copy; 国土地理院"
+                            url="https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg"
+                            minZoom={2}
+                            maxZoom={18}
+                        />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.BaseLayer name="国土地理院 陰影起伏図">
+                        <TileLayer
+                            attribution="&copy; 国土地理院"
+                            url="https://cyberjapandata.gsi.go.jp/xyz/relief/{z}/{x}/{y}.png"
+                            maxZoom={15}
+                        />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.BaseLayer name="OpenTopoMap">
+                        <TileLayer
+                            attribution="© OpenTopoMap contributors"
+                            url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
+                            minZoom={0}
+                            maxZoom={17}
+                        />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.BaseLayer name="OpenStreetMap">
+                        <TileLayer
+                            attribution='&copy; OpenStreetMap contributors'
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            minZoom={0}
+                            maxZoom={19}
+                        />
+                    </LayersControl.BaseLayer>
+                    <LayersControl.Overlay name="雲レイヤー">
+                        <TileLayer
+                            url="https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=d334b90a323d9d1c6fa75f5758ec6e69"
+                            opacity={0.9}
+                            zIndex={80}
+                        />
+                    </LayersControl.Overlay>
+                    {targetTime && (
+                        <JmaRadarLayer targetTime={targetTime} /> //雨レイヤー
+                    )}
+                    <LayersControl.Overlay name="気温レイヤー">
+                        <TileLayer
+                            url="https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=d334b90a323d9d1c6fa75f5758ec6e69"
+                            opacity={0.7}
+                            zIndex={50}
+                            tms={false}
+                            noWrap={true}
+                            bounds={[
+                                [20, 120],
+                                [50, 155],
+                            ]}
+                        />
+                    </LayersControl.Overlay>
+                </LayersControl>
+                <LocateButton />
+                <ZoomControl />
+                <FullScreen />
+                <InitialLocate />
+                <MarkerClusterGroup>
+                    {rindouList.map((rindou: Rindou) => (
+                        <Marker
+                            key={rindou.id}
+                            ref={setMarkerRef(rindou.id)}
+                            position={[rindou.lat, rindou.lng]}
+                            icon={isLogin && Array.isArray(clearList) && clearList.some(clear => Number(clear.rindou_id) === Number(rindou.id)) ? clearIcon : customIcon}
+                            eventHandlers={{
+                                click: () => {
+                                    toggleSelectedMarkerIds(rindou.id);
+                                    togglePopup({ id: rindou.id, isOpen: !selectedMarkerIds.includes(rindou.id) });
+                                }
+                            }}
                         >
-                            {rindou.name}
-                        </Popup>
-                    </Marker>
-                ))}
-            </MarkerClusterGroup>
-            {Array.isArray(getLatlngs) && getLatlngs.length > 0 && (
-                getLatlngs.map((latlngs) => (
-                    <Polyline
-                        key={JSON.stringify(latlngs)} // latlngsをキーにして一意性を確保
-                        positions={latlngs}
-                        color="red"
-                    />
-                ))
-            )}
-            <ZoomToPolylines latlngsList={Array.isArray(getLatlngs) ? getLatlngs : []} />
-        </MapContainer>
-    );
-};
+                            <Popup
+                                autoClose={false}
+                                closeOnClick={false}
+                            >
+                                {rindou.name}
+                            </Popup>
+                        </Marker>
+                    ))}
+                </MarkerClusterGroup>
+                {Array.isArray(getLatlngs) && getLatlngs.length > 0 && (
+                    getLatlngs.map((latlngs) => (
+                        <Polyline
+                            key={JSON.stringify(latlngs)} // latlngsをキーにして一意性を確保
+                            positions={latlngs}
+                            color="red"
+                        />
+                    ))
+                )}
+                <ZoomToPolylines latlngsList={Array.isArray(getLatlngs) ? getLatlngs : []} />
+            </MapContainer>
+        );
+    };
 
 export default Map;

@@ -22,6 +22,8 @@ import useFormatDate from '@/hooks/useFormatDate';
 import useFormatHour from '@/hooks/useFormatHour';
 import useHeaderHandler from '@/hooks/useHeaderHandler';
 import useShowToast from '@/hooks/useShowToast';
+import useJmaTargetTime from '@/hooks/useJmaTargetTime';
+import useRainViewer from '@/hooks/useRainViewer';
 
 const TopPage = ({
         rindouList,
@@ -80,6 +82,8 @@ const TopPage = ({
         postMessage,
     } = useHeaderHandler();
     const { showToast } = useShowToast();
+    const targetTime = useJmaTargetTime();
+    const { host, time } = useRainViewer();
 
     useEffect(() => {
         if (!loginMessage) return;
@@ -156,6 +160,9 @@ const TopPage = ({
                                     togglePopup={togglePopup}
                                     isLogin={isLogin}
                                     clearList={clearList}
+                                    targetTime={targetTime}
+                                    host={host}
+                                    time={time}
                                 />
                             </GridItem>
                         </Grid>

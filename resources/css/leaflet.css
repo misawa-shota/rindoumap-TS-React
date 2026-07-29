@@ -5,13 +5,3 @@
     display: flex;
     gap: 6px;
 }
-
-/* 雨レイヤーのデザイン修正 */
-.rain-layer .leaflet-tile {
-    filter:
-        saturate(100)
-        contrast(4)
-        brightness(100)
-    ;
-}
-
