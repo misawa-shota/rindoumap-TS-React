@@ -19,7 +19,6 @@ export const Toaster = () => {
         <Portal>
             <ChakraToaster toaster={toaster} insetInline={{ mdDown: "4" }}>
                 {(toast) => {
-                console.log(toast.type);
 
                 return (
                 <Toast.Root

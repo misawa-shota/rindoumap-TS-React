@@ -40,4 +40,12 @@ return [
         'engine_id' => env('GOOGLE_SEARCH_ENGINE_ID'),
     ],
 
+    'serpapi' => [
+        'api_key' => env('SERP_API_KEY'),
+    ],
+
+    'openweather' => [
+        'api_key' => env('OPENWEATHER_API_KEY'),
+    ],
+
 ];
