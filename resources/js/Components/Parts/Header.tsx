@@ -1,8 +1,8 @@
-import { Box, HStack, Heading, InputGroup, Group, Input, TabsList, TabsTrigger, Image, Text, Link, Grid, GridItem, Button, DialogRoot, DialogTrigger, Portal, DialogBackdrop, DialogCloseTrigger, DialogPositioner, DialogContent, DialogHeader, DialogTitle, CloseButton, DialogBody, DialogFooter, FieldRoot, FieldLabel, FieldErrorText, FieldErrorIcon, NativeSelectRoot, NativeSelectField, ListRoot, ListItem, Textarea, NativeSelectIndicator, FieldRequiredIndicator, FileUploadRoot, FileUploadHiddenInput, FileUploadTrigger, FileUploadList, FileUpload, FileUploadItemGroup } from '@chakra-ui/react';
+import { Box, HStack, Heading, InputGroup, Group, Input, TabsList, TabsTrigger, Image, Text, Grid, GridItem, Button, DialogRoot, DialogTrigger, Portal, DialogBackdrop, DialogCloseTrigger, DialogPositioner, DialogContent, DialogHeader, DialogTitle, CloseButton, DialogBody, DialogFooter, FieldRoot, FieldLabel, FieldErrorText, FieldErrorIcon, NativeSelectRoot, NativeSelectField, ListRoot, ListItem, Textarea, NativeSelectIndicator, FieldRequiredIndicator, FileUploadRoot, FileUploadHiddenInput, FileUploadTrigger, FileUploadList, FileUpload, FileUploadItemGroup } from '@chakra-ui/react';
 import { CiSearch, } from "react-icons/ci";
 import { FaMap, FaList } from "react-icons/fa6";
 import { MdError } from "react-icons/md";
-import { usePage } from '@inertiajs/react';
+import { usePage, Link } from '@inertiajs/react';
 import type { PageProps } from '@/types/index';
 import type { Rindou } from '@/types/Rindou';
 import AppLogo from './AppLogo';
@@ -134,16 +134,20 @@ const Header = ({
                             onOpenChange={(e) => setIsOpen(e.open)}
                         >
                             <DialogTrigger asChild>
-                                <Link
+                                <Box
+                                    bg={"red"}
                                     color={"white"}
                                     rounded={"md"}
                                     p={2}
                                     textAlign={"center"}
-                                    bg={"red"}
-                                    onClick={() => setIsOpen(true)}
+                                    cursor={"pointer"}
                                 >
-                                    投稿作成
-                                </Link>
+                                    <Link
+                                        onClick={() => setIsOpen(true)}
+                                    >
+                                        投稿作成
+                                    </Link>
+                                </Box>
                             </DialogTrigger>
                                 <DialogBackdrop />
                                 <DialogPositioner>
@@ -329,18 +333,53 @@ const Header = ({
                                     </DialogContent>
                                 </DialogPositioner>
                         </DialogRoot>
-                        <Link href={route("dashboard")} color={"white"} rounded={"md"} p={2} textAlign={"center"} bg={"red"}>
-                            マイページ
-                        </Link>
+                        <Box
+                            bg={"red"}
+                            color={"white"}
+                            rounded={"md"}
+                            p={2}
+                            textAlign={"center"}
+                        >
+                            <Link href={route("dashboard")} color={"white"}>
+                                マイページ
+                            </Link>
+                        </Box>
+                        <Box
+                            bg={"red"}
+                            color={"white"}
+                            rounded={"md"}
+                            p={2}
+                            textAlign={"center"}
+                        >
+                            <Link href={route("logout")} method="post" color={"white"}>
+                                ログアウト
+                            </Link>
+                        </Box>
                     </HStack>
                 ) : (
                     <HStack gap={2} alignItems={"center"}>
-                        <Link href={route("login")} color={"white"} rounded={"md"} p={2} textAlign={"center"} bg={"red"}>
-                            ログイン
-                        </Link>
-                        <Link href={route("register")} color={"white"} rounded={"md"} p={2} textAlign={"center"} bg={"red"}>
-                            新規登録
-                        </Link>
+                        <Box
+                            bg={"red"}
+                            color={"white"}
+                            rounded={"md"}
+                            p={2}
+                            textAlign={"center"}
+                        >
+                            <Link href={route("login")} color={"white"}>
+                                ログイン
+                            </Link>
+                        </Box>
+                        <Box
+                            bg={"red"}
+                            color={"white"}
+                            rounded={"md"}
+                            p={2}
+                            textAlign={"center"}
+                        >
+                            <Link href={route("register")} color={"white"}>
+                                新規登録
+                            </Link>
+                        </Box>
                     </HStack>
                 )}
             </HStack>

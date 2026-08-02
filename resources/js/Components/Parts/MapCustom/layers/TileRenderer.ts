@@ -22,7 +22,7 @@ export default class TileRenderer {
 
         ctx.imageSmoothingEnabled = false;
 
-        ctx.globalAlpha = 0.6;
+        ctx.globalAlpha = 0.7;
 
         ctx.drawImage(
             image,
