@@ -20,7 +20,16 @@ const JmaRadarLayer = ({ targetTime }: Props) => {
     },[targetTime])
 
     useEffect(() => {
+        // Paneが作成されていない場合は作成する
+        if (!map.getPane("rainPane")) {
+            const pane = map.createPane("rainPane");
+
+            pane.style.zIndex = "650"; // 既存のレイヤーの上に表示されるようにz-indexを設定
+            pane.style.pointerEvents = "none"; // マウスイベントを無効化
+        }
+
         const layer = new JmaRadarGridLayer({
+            pane: "rainPane",
             getTargetTime: () => targetTimeRef.current,
             tileSize: 256,
             updateWhenZooming: false,
