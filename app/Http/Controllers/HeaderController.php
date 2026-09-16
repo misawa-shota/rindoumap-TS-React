@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class HeaderController extends Controller
 {
@@ -92,5 +93,33 @@ class HeaderController extends Controller
         }
 
         return $status;
+    }
+
+    public function mypage()
+    {
+        $user = Auth::user();
+        $posts = Post::where('user_id', $user->id)->orderBy('created_at', 'desc')->paginate(10);
+        $iconImage = Storage::disk('s3')->url('icon_img/' . $user->icon_img);
+
+        // s3からpost_imgフォルダ内のファイルを取得
+        $postImages = collect(
+            Storage::disk('s3')->files('post_img')
+        )->map(function($path) {
+            return [
+                'path' => $path,
+                'fileName' => basename($path),
+                'url' => Storage::disk('s3')->url($path),
+            ];
+        });
+
+        $rindous = Rindou::all();
+
+        return Inertia::render('MyPage/index', [
+            'user' => $user,
+            'posts' => $posts,
+            'iconImage' => $iconImage,
+            'postImages' => $postImages,
+            'rindous' => $rindous,
+        ]);
     }
 }
