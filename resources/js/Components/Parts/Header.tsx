@@ -340,7 +340,7 @@ const Header = ({
                             p={2}
                             textAlign={"center"}
                         >
-                            <Link href={route("dashboard")} color={"white"}>
+                            <Link href={route("header.mypage")} color={"white"}>
                                 マイページ
                             </Link>
                         </Box>

@@ -5,8 +5,8 @@ type Post = {
     content: string;
     img: string;
     title: string;
-    created_at: Date;
-    updated_at: Date;
+    created_at: string;
+    updated_at: string;
 };
 
 export type { Post };
