@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Clear;
 use Illuminate\Http\Request;
 use App\Models\Rindou;
 use App\Models\Post;
@@ -100,10 +101,22 @@ class HeaderController extends Controller
         $user = Auth::user();
         $posts = Post::where('user_id', $user->id)->orderBy('created_at', 'desc')->paginate(10);
         $iconImage = Storage::disk('s3')->url('icon_img/' . $user->icon_img);
+        $clears = Clear::where('user_id', $user->id)->orderBy('created_at', 'desc')->paginate(25);
 
         // s3からpost_imgフォルダ内のファイルを取得
         $postImages = collect(
             Storage::disk('s3')->files('post_img')
+        )->map(function($path) {
+            return [
+                'path' => $path,
+                'fileName' => basename($path),
+                'url' => Storage::disk('s3')->url($path),
+            ];
+        });
+
+        // s3からimgフォルダ内のファイルを取得
+        $images = collect(
+            Storage::disk('s3')->files('img')
         )->map(function($path) {
             return [
                 'path' => $path,
@@ -120,6 +133,8 @@ class HeaderController extends Controller
             'iconImage' => $iconImage,
             'postImages' => $postImages,
             'rindous' => $rindous,
+            'clears' => $clears,
+            'images' => $images,
         ]);
     }
 }
