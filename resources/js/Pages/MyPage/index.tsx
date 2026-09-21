@@ -3,6 +3,8 @@ import type { User } from "@/types";
 import type { PaginatedPosts } from "@/types/PaginatedPosts";
 import type { postImage } from "@/types/postImage";
 import type { Rindou } from "@/types/Rindou";
+import type { PaginatedClears } from "@/types/PaginatedClears";
+import type { Images } from "@/types/Images";
 import { Link as InertiaLink, router } from "@inertiajs/react";
 import { FaArrowLeftLong, FaList } from "react-icons/fa6";
 import { CiCalendar, CiLocationOn } from "react-icons/ci";
@@ -14,12 +16,16 @@ const MyPage = ({
     iconImage,
     postImages,
     rindous,
+    clears,
+    images,
 }: {
     user: User,
     posts: PaginatedPosts,
     iconImage: string,
     postImages: postImage[],
     rindous: Rindou[],
+    clears: PaginatedClears,
+    images: Images[],
 }) => {
     return (
         <Grid
@@ -141,6 +147,15 @@ const MyPage = ({
                                     <ScrollArea.Root pb={5}>
                                         <ScrollArea.Viewport>
                                             <ScrollArea.Content>
+                                                <Flex
+                                                    flexDirection={"row"}
+                                                    justifyContent={"space-between"}
+                                                    alignItems={"center"}
+                                                    mb={5}
+                                                >
+                                                    <Text fontSize={"2xl"} fontWeight={"bold"}>投稿一覧</Text>
+                                                    <Text fontSize={"lg"}>{posts.total}件</Text>
+                                                </Flex>
                                                 <Stack gap={5}>
                                                     {posts.data.map((post) => {
                                                         const postImage = post.img
@@ -155,7 +170,7 @@ const MyPage = ({
                                                                 flexDirection={"row"}
                                                                 overflow={"hidden"}
                                                                 border={"1px solid"}
-                                                                maxW={"3xl"}
+                                                                maxW={"100%"}
                                                                 alignItems={"center"}
                                                             >
                                                                 {post.img &&
@@ -262,7 +277,107 @@ const MyPage = ({
                                     </ScrollArea.Root>
                                 </Tabs.Content>
                                 <Tabs.Content value="clears">
-                                    <Text>走破した林道の内容</Text>
+                                    <ScrollArea.Root pb={5}>
+                                        <ScrollArea.Viewport>
+                                            <ScrollArea.Content>
+                                                <Flex
+                                                    flexDirection={"row"}
+                                                    justifyContent={"space-between"}
+                                                    alignItems={"center"}
+                                                    mb={5}
+                                                >
+                                                    <Text fontSize={"2xl"} fontWeight={"bold"}>走行した林道一覧</Text>
+                                                    <Text fontSize={"lg"}>{clears.total}件</Text>
+                                                </Flex>
+                                                <Grid templateColumns={"repeat(5, 1fr)"} gap={5}>
+                                                    {clears.data.map((clear) => {
+                                                        const clearRindouImage = images.find(
+                                                            (image) =>
+                                                                image.fileName ===
+                                                                rindous.find((rindou) => rindou.id === clear.rindou_id)?.rindou_img
+                                                        );
+
+                                                        return (
+                                                            <Card.Root
+                                                                key={clear.id}
+                                                                flexDirection={"column"}
+                                                                overflow={"hidden"}
+                                                                border={"1px solid"}
+                                                                maxW={"100%"}
+                                                                alignItems={"center"}
+                                                            >
+                                                                <Image
+                                                                    src={clearRindouImage ? clearRindouImage.url : images.find((image) => image.fileName === "default_rindou_image.jpg")?.url}
+                                                                    width={"150px"}
+                                                                    height={"150px"}
+                                                                />
+                                                                <Card.Body p={0}>
+                                                                    <HStack gapX={1} alignItems={"center"}>
+                                                                        <CiLocationOn />
+                                                                        <Card.Title fontWeight={"bold"} fontSize={"sm"} textAlign={"center"}>
+                                                                            {rindous.find((rindou) => rindou.id === clear.rindou_id)?.name}
+                                                                        </Card.Title>
+                                                                    </HStack>
+                                                                </Card.Body>
+                                                            </Card.Root>
+                                                        );
+                                                    })}
+                                                </Grid>
+                                            </ScrollArea.Content>
+                                        </ScrollArea.Viewport>
+                                        <Pagination.Root
+                                            count={clears.total}
+                                            pageSize={clears.per_page}
+                                            page={clears.current_page}
+                                            onPageChange={(details) => {
+                                                router.get(
+                                                    route("header.mypage"),
+                                                    {
+                                                        page: details.page,
+                                                    },
+                                                    {
+                                                        preserveState: true,
+                                                        preserveScroll: true,
+                                                    }
+                                                );
+                                            }}
+                                        >
+                                            <ButtonGroup mt={5} justifyContent={"center"} variant={"ghost"} size={"sm"} gap={2} w={"100%"} >
+                                                <Pagination.PrevTrigger asChild>
+                                                    <IconButton>
+                                                        <IoIosArrowBack size={30}/>
+                                                    </IconButton>
+                                                </Pagination.PrevTrigger>
+
+                                                <Pagination.Items
+                                                    render={(page) => {
+                                                        return (
+                                                            <Pagination.Item
+                                                                key={page.value}
+                                                                {...page}
+                                                                border={"1px solid"}
+                                                                borderColor={"transparent"}
+                                                                _selected={{
+                                                                    borderColor: "red.500",
+                                                                    bg: "white",
+                                                                }}
+                                                                px={3}
+                                                                py={1}
+                                                            >
+                                                                {page.value}
+                                                            </Pagination.Item>
+                                                        );
+                                                    }}
+                                                />
+
+                                                <Pagination.NextTrigger asChild>
+                                                    <IconButton>
+                                                        <IoIosArrowForward size={30}/>
+                                                    </IconButton>
+                                                </Pagination.NextTrigger>
+                                            </ButtonGroup>
+                                        </Pagination.Root>
+                                    </ScrollArea.Root>
                                 </Tabs.Content>
                             </Container>
                         </Box>
