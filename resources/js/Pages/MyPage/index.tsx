@@ -170,52 +170,58 @@ const MyPage = ({
                                                                 flexDirection={"row"}
                                                                 overflow={"hidden"}
                                                                 border={"1px solid"}
-                                                                maxW={"100%"}
                                                                 alignItems={"center"}
+                                                                maxW={"100%"}
                                                             >
-                                                                {post.img &&
-                                                                        <Image
-                                                                            src={postImage?.url}
-                                                                            w={"200px"}
-                                                                            height={"200px"}
-                                                                            fit={"cover"}
-                                                                        />
-                                                                }
-                                                                <Card.Body  p={5}>
-                                                                    {rindous.map((rindou) => (
-                                                                        rindou.id === post.rindou_id && (
-                                                                            <Flex flexDirection={"row"} justifyContent={"space-between"} alignItems={"center"} key={rindou.id}>
-                                                                                <HStack gap={10}>
-                                                                                    <VStack alignItems={"flex-start"}>
-                                                                                        <Card.Title fontWeight={"bold"} fontSize={"xl"}>{rindou.name}</Card.Title>
-                                                                                        <HStack gapX={5}>
-                                                                                            <CiCalendar/>
-                                                                                            <Text>{new Date(post.created_at).toLocaleDateString("ja-JP")}</Text>
-                                                                                        </HStack>
-                                                                                        <HStack gapX={5}>
-                                                                                            <CiLocationOn />
-                                                                                            <Text>{rindou.prefecture}</Text>
-                                                                                        </HStack>
-                                                                                    </VStack>
-                                                                                    {rindou.distance >= 1000 ? (
-                                                                                        <Text fontWeight={"bold"} fontSize={"xl"}>
-                                                                                            約
-                                                                                            <Span fontSize={"3xl"}>{(rindou.distance / 1000).toFixed(1)}</Span>
-                                                                                            km
-                                                                                        </Text>
-                                                                                        ) : (
+                                                                <Link
+                                                                    as={InertiaLink}
+                                                                    href={route("post.show", post.id)}
+                                                                    w={"100%"}
+                                                                >
+                                                                    {post.img &&
+                                                                            <Image
+                                                                                src={postImage?.url}
+                                                                                w={"200px"}
+                                                                                height={"200px"}
+                                                                                fit={"cover"}
+                                                                            />
+                                                                    }
+                                                                    <Card.Body  p={5}>
+                                                                        {rindous.map((rindou) => (
+                                                                            rindou.id === post.rindou_id && (
+                                                                                <Flex flexDirection={"row"} justifyContent={"space-between"} alignItems={"center"} key={rindou.id}>
+                                                                                    <HStack gap={10}>
+                                                                                        <VStack alignItems={"flex-start"}>
+                                                                                            <Card.Title fontWeight={"bold"} fontSize={"xl"}>{rindou.name}</Card.Title>
+                                                                                            <HStack gapX={5}>
+                                                                                                <CiCalendar/>
+                                                                                                <Text>{new Date(post.created_at).toLocaleDateString("ja-JP")}</Text>
+                                                                                            </HStack>
+                                                                                            <HStack gapX={5}>
+                                                                                                <CiLocationOn />
+                                                                                                <Text>{rindou.prefecture}</Text>
+                                                                                            </HStack>
+                                                                                        </VStack>
+                                                                                        {rindou.distance >= 1000 ? (
                                                                                             <Text fontWeight={"bold"} fontSize={"xl"}>
-                                                                                            約
-                                                                                            <Span fontSize={"3xl"}>{rindou.distance.toFixed(1)}</Span>
-                                                                                            m
-                                                                                        </Text>
-                                                                                    )}
-                                                                                </HStack>
-                                                                                <IoIosArrowForward size={30}/>
-                                                                            </Flex>
-                                                                        )
-                                                                    ))}
-                                                                </Card.Body>
+                                                                                                約
+                                                                                                <Span fontSize={"3xl"}>{(rindou.distance / 1000).toFixed(1)}</Span>
+                                                                                                km
+                                                                                            </Text>
+                                                                                            ) : (
+                                                                                                <Text fontWeight={"bold"} fontSize={"xl"}>
+                                                                                                約
+                                                                                                <Span fontSize={"3xl"}>{rindou.distance.toFixed(1)}</Span>
+                                                                                                m
+                                                                                            </Text>
+                                                                                        )}
+                                                                                    </HStack>
+                                                                                    <IoIosArrowForward size={30}/>
+                                                                                </Flex>
+                                                                            )
+                                                                        ))}
+                                                                    </Card.Body>
+                                                                </Link>
                                                             </Card.Root>
                                                         )
                                                     })}

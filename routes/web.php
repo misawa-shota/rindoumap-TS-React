@@ -4,6 +4,7 @@ use App\Http\Controllers\MapController;
 use App\Http\Controllers\SidebarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HeaderController;
+use App\Http\Controllers\PostController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,10 +25,16 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // プロフィール関連のルート
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // ヘッダーのマイページルート
     Route::get('/header/mypage', [HeaderController::class, 'mypage'])->name('header.mypage');
+
+    // 投稿関連のルート
+    Route::get('/post/show/{id}', [PostController::class, 'show'])->name('post.show');
 });
 
 // サイドバーのルート
